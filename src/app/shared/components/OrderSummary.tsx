@@ -20,29 +20,45 @@ export default function OrderSummary() {
                     Orders over $100 qualify for free delivery!
                 </Typography>
                 <Box mt={2}>
-                    <Box display="flex" justifyContent="space-between" mb={1}>
-                        <Typography color="textSecondary">Subtotal</Typography>
-                        <Typography>
+                    <Box 
+                        display="flex" 
+                        flexDirection={{ xs: 'column', sm: 'row' }} // Stack vertically on small screens, horizontal on larger screens
+                        justifyContent="space-between" 
+                        mb={1}>
+                        <Typography color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>Subtotal</Typography>
+                        <Typography sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                             {currencyFormat(subtotal)}
                         </Typography>
                     </Box>
-                    <Box display="flex" justifyContent="space-between" mb={1}>
-                        <Typography color="textSecondary">Discount</Typography>
-                        <Typography color="success">
+                    <Box 
+                        display="flex" 
+                        flexDirection={{ xs: 'column', sm: 'row' }} // Stack vertically on small screens, horizontal on larger screens
+                        justifyContent="space-between" 
+                        mb={1}>
+                        <Typography color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>Discount</Typography>
+                        <Typography color="success" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                             {/* TODO */}
                             -$0.00
                         </Typography>
                     </Box>
-                    <Box display="flex" justifyContent="space-between" mb={1}>
-                        <Typography color="textSecondary">Delivery fee</Typography>
-                        <Typography>
+                    <Box 
+                        display="flex" 
+                        flexDirection={{ xs: 'column', sm: 'row' }} // Stack vertically on small screens, horizontal on larger screens
+                        justifyContent="space-between" 
+                        mb={1}>
+                        <Typography color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>Delivery fee</Typography>
+                        <Typography sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                             {currencyFormat(deliveryFee)}
                         </Typography>
                     </Box>
                     <Divider sx={{ my: 2 }} />
-                    <Box display="flex" justifyContent="space-between" mb={1}>
-                        <Typography color="textSecondary">Total</Typography>
-                        <Typography>
+                    <Box 
+                        display="flex" 
+                        flexDirection={{ xs: 'column', sm: 'row' }} // Stack vertically on small screens, horizontal on larger screens
+                        justifyContent="space-between" 
+                        mb={1}>
+                        <Typography color="textSecondary" sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>Total</Typography>
+                        <Typography sx={{ fontSize: { xs: '0.875rem', sm: '1rem' } }}>
                             {currencyFormat(subtotal + deliveryFee)}
                         </Typography>
                     </Box>
@@ -63,6 +79,7 @@ export default function OrderSummary() {
                         component={Link}
                         to='/catalog'
                         fullWidth
+                        sx={{ textAlign: 'center' }} 
                     >
                         Continue Shopping
                     </Button>

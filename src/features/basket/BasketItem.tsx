@@ -14,72 +14,90 @@ export default function BasketItem({ item }: Props) {
 
     return (
         <Paper sx={{
-            height: 140,
+            height: { xs: 'auto', md: 140 }, // Auto height on small screens
             borderRadius: 3,
             display: 'flex',
+            flexDirection: { xs: 'column', md: 'row' }, // Column on small screens, row on large screens
             justifyContent: 'space-between',
             alignItems: 'center',
-            mb: 2
+            mb: 2,
+            pt: { xs: 2, md: 0 },
+            pb: { xs: 2, md: 0 },
+            position: 'relative', // Added relative positioning to the Paper component
         }}>
-            <Box display='flex' alignItems='center'>
+            <Box display='flex' flexDirection={{ xs: 'column', md: 'row' }} alignItems='center'>
                 <Box
                     component='img'
                     src={item.pictureUrl}
                     alt={item.name}
                     sx={{
-                        width: 100,
-                        height: 100,
+                        width: { xs: 80, sm: 100 }, // Smaller image size on small screens
+                        height: { xs: 80, sm: 100 },
                         objectFit: 'cover',
                         borderRadius: '4px',
-                        mr: 8,
-                        ml: 4
+                        mr: { sm: 8 },
+                        ml: { xs: 2, sm: 4 }, // Different margins for small screens
+                        mb: { xs: 2, sm: 0 } // Margin-bottom on small screens only
                     }}
                 />
 
                 <Box display='flex' flexDirection='column' gap={1}>
-                    <Typography variant="h6">{item.name}</Typography>
+                    <Typography 
+                        variant="h6" 
+                        sx={{ 
+                            fontSize: { xs: '1rem', sm: '1.25rem' } 
+                        }}>
+                        {item.name}
+                    </Typography>
 
-                    <Box display='flex' alignItems='center' gap={3}>
-                        <Typography sx={{fontSize: '1.1rem'}}>
+                    <Box display='flex' flexDirection={{ xs: 'column', sm: 'row' }} alignItems='center' gap={2}>
+                        <Typography sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }}>
                             {currencyFormat(item.price)} x {item.quantity}
                         </Typography>
-                        <Typography sx={{fontSize: '1.1rem'}} color='primary'>
+                        <Typography sx={{ fontSize: { xs: '1rem', sm: '1.1rem' } }} color='primary'>
                             {currencyFormat(item.price * item.quantity)}
                         </Typography>
                     </Box>
 
-                    <Grid2 container spacing={1} alignItems='center'>
+                    <Grid2 
+                        container 
+                        spacing={1} 
+                        alignItems='center'
+                        sx={{
+                            justifyContent: { xs: 'center', sm: 'flex-start' },  // Center on small screens, align to start on larger screens
+                        }}>
                         <IconButton 
-                            onClick={() => removeBasketItem({productId: item.productId, quantity: 1})}
+                            onClick={() => removeBasketItem({ productId: item.productId, quantity: 1 })}
                             color="error" 
                             size="small" 
-                            sx={{border: 1, borderRadius: 1, minWidth: 0}}
+                            sx={{ border: 1, borderRadius: 1, minWidth: 0 }}
                         >
                             <Remove />
                         </IconButton>
                         <Typography variant="h6">{item.quantity}</Typography>
                         <IconButton 
-                            onClick={() => addBasketItem({product: item, quantity: 1})}
+                            onClick={() => addBasketItem({ product: item, quantity: 1 })}
                             color="success" 
                             size="small" 
-                            sx={{border: 1, borderRadius: 1, minWidth: 0}}
+                            sx={{ border: 1, borderRadius: 1, minWidth: 0 }}
                         >
                             <Add />
                         </IconButton>
                     </Grid2>
                 </Box>
             </Box>
+            
             <IconButton
-                onClick={() => removeBasketItem({productId: item.productId, quantity: item.quantity})}
+                onClick={() => removeBasketItem({ productId: item.productId, quantity: item.quantity })}
                 color='error'
                 size="small" 
                 sx={{
                     border: 1, 
                     borderRadius: 1, 
                     minWidth: 0, 
-                    alignSelf: 'start',
-                    mr: 1,
-                    mt: 1
+                    position: 'absolute', // Position absolute within Paper
+                    top: 8, // Distance from the top
+                    right: 8, // Distance from the right
                 }}
             >
                 <Close />
