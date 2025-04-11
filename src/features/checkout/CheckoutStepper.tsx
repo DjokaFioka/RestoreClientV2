@@ -10,11 +10,13 @@ import { currencyFormat } from "../../lib/util";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { LoadingButton } from "@mui/lab";
+import { useCreateOrderMutation } from "../orders/orderApi";
 
 const steps = ['Address', 'Payment', 'Review'];
 
 export default function CheckoutStepper() {
     const [activeStep, setActiveStep] = useState(0);
+    const [createOrder] = useCreateOrderMutation();
     const { basket } = useBasket();
     const { data: { name, ...restAddress } = {} as Address, isLoading } = useFetchAddressQuery();
     const [updateAddress] = useUpdateUserAddressMutation();
@@ -31,25 +33,25 @@ export default function CheckoutStepper() {
     const handleNext = async () => {
         if (activeStep === 0 && saveAddressChecked && elements) {
             const address = await getStripeAddress();
-            if (address) 
+            if (address)
                 await updateAddress(address);
         }
         if (activeStep === 1) {
-            if (!elements || !stripe) 
+            if (!elements || !stripe)
                 return;
             const result = await elements.submit();
-            if (result.error) 
+            if (result.error)
                 return toast.error(result.error.message);
 
             const stripeResult = await stripe.createConfirmationToken({ elements });
-            if (stripeResult.error) 
+            if (stripeResult.error)
                 return toast.error(stripeResult.error.message);
             setConfirmationToken(stripeResult.confirmationToken);
         }
         if (activeStep === 2) {
             await confirmPayment();
         }
-        if (activeStep < 2) 
+        if (activeStep < 2)
             setActiveStep(step => step + 1);
     }
 
@@ -58,6 +60,9 @@ export default function CheckoutStepper() {
         try {
             if (!confirmationToken || !basket?.clientSecret)
                 throw new Error('Unable to process payment');
+
+            const orderModel = await createOrderModel();
+            const orderResult = await createOrder(orderModel);
 
             const paymentResult = await stripe?.confirmPayment({
                 clientSecret: basket.clientSecret,
@@ -68,7 +73,7 @@ export default function CheckoutStepper() {
             });
 
             if (paymentResult?.paymentIntent?.status === 'succeeded') {
-                navigate('/checkout/success');
+                navigate('/checkout/success', {state: orderResult});
                 clearBasket();
             } else if (paymentResult?.error) {
                 throw new Error(paymentResult.error.message);
@@ -85,13 +90,23 @@ export default function CheckoutStepper() {
         }
     }
 
+    const createOrderModel = async () => {
+        const shippingAddress = await getStripeAddress();
+        const paymentSummary = confirmationToken?.payment_method_preview.card;
+
+        if (!shippingAddress || !paymentSummary) 
+            throw new Error('Problem creating order');
+
+        return {shippingAddress, paymentSummary}
+    }
+
     const getStripeAddress = async () => {
         const addressElement = elements?.getElement('address');
-        if (!addressElement) 
+        if (!addressElement)
             return null;
         const { value: { name, address } } = await addressElement.getValue();
 
-        if (name && address) 
+        if (name && address)
             return { ...address, name }
 
         return null;
@@ -109,7 +124,7 @@ export default function CheckoutStepper() {
         setPaymentComplete(event.complete)
     }
 
-    if (isLoading) 
+    if (isLoading)
         return <Typography variant="h6">Loading checkout...</Typography>
 
     return (
@@ -146,7 +161,7 @@ export default function CheckoutStepper() {
                     />
                 </Box>
                 <Box sx={{ display: activeStep === 1 ? 'block' : 'none' }}>
-                    <PaymentElement 
+                    <PaymentElement
                         onChange={handlePaymentChange}
                         options={{
                             wallets: {
