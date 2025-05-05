@@ -1,7 +1,7 @@
 import { Button, Menu, Fade, MenuItem, ListItemIcon, ListItemText, Divider } from "@mui/material";
 import { useState } from "react";
 import { User } from "../models/user";
-import { History, Logout, Person } from "@mui/icons-material";
+import { History, Inventory, Logout, Person } from "@mui/icons-material";
 import { useLogoutMutation } from "../../features/account/accountApi";
 import { Link } from "react-router-dom";
 
@@ -26,7 +26,7 @@ export default function UserMenu({ user }: Props) {
                 onClick={handleClick}
                 color='inherit'
                 size='large'
-                sx={{fontSize: '1.1rem'}}
+                sx={{ fontSize: '1.1rem' }}
             >
                 {user.email}
             </Button>
@@ -52,6 +52,14 @@ export default function UserMenu({ user }: Props) {
                     </ListItemIcon>
                     <ListItemText>My orders</ListItemText>
                 </MenuItem>
+                {user.roles.includes('Admin') &&
+                    <MenuItem component={Link} to='/inventory'>
+                        <ListItemIcon>
+                            <Inventory />
+                        </ListItemIcon>
+                        <ListItemText>Inventory</ListItemText>
+                    </MenuItem>
+                }
                 <Divider />
                 <MenuItem onClick={logout}>
                     <ListItemIcon>
